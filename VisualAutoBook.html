@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Service Reservation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .step {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .step-title {
+            font-size: 1.4em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .file-upload {
+            border: 3px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .file-upload.dragover {
+            border-color: #2ecc71;
+            background: #d5f4e6;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            color: #bdc3c7;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .preview-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .preview-media {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+        }
+
+        .keywords {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .keyword-tag {
+            display: inline-block;
+            background: #2196f3;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 0.9em;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .service-card {
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .service-card.selected {
+            border-color: #2ecc71;
+            background: #d5f4e6;
+        }
+
+        .service-card.preselected {
+            border-color: #f39c12;
+            background: #fef9e7;
+        }
+
+        .service-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .service-description {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .service-price {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .match-indicator {
+            background: #f39c12;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            float: right;
+        }
+
+        .confirmation {
+            display: none;
+            background: #d5f4e6;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Vehicle Service Reservation</h1>
+            <p>Upload an image or video of your vehicle's issue to get personalized service recommendations</p>
+        </div>
+
+        <div class="content">
+            <!-- Step 1: File Upload -->
+            <div class="step active" id="step1">
+                <div class="step-title">
+                    <div class="step-number">1</div>
+                    Upload Vehicle Issue Media
+                </div>
+                
+                <div class="file-upload" id="fileUpload">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Click to select or drag & drop your image/video</div>
+                    <div style="font-size: 0.9em; color: #95a5a6;">Supported formats: JPG, PNG, MP4, MOV (Max 10MB)</div>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*,video/*">
+                </div>
+
+                <div class="file-info" id="fileInfo">
+                    <strong>Selected file:</strong> <span id="fileName"></span><br>
+                    <strong>Size:</strong> <span id="fileSize"></span>
+                </div>
+
+                <div class="preview-container" id="previewContainer"></div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" id="analyzeBtn" disabled>Analyze Issue 🔍</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Analysis -->
+            <div class="step" id="step2">
+                <div class="step-title">
+                    <div class="step-number">2</div>
+                    AI Analysis Results
+                </div>
+
+                <div class="loading" id="analysisLoading">
+                    <div class="spinner"></div>
+                    <div>Analyzing your vehicle's issue using AI...</div>
+                </div>
+
+                <div class="results" id="analysisResults">
+                    <div class="keywords">
+                        <h3>🎯 Identified Issues:</h3>
+                        <div id="keywordsList"></div>
+                    </div>
+                </div>
+
+                <div class="error" id="analysisError"></div>
+            </div>
+
+            <!-- Step 3: Service Selection -->
+            <div class="step" id="step3">
+                <div class="step-title">
+                    <div class="step-number">3</div>
+                    Recommended Services
+                </div>
+
+                <div class="loading" id="servicesLoading">
+                    <div class="spinner"></div>
+                    <div>Loading available services...</div>
+                </div>
+
+                <div class="results" id="servicesResults">
+                    <p>Based on the analysis, we've preselected the most relevant services. You can modify the selection:</p>
+                    <div class="services-grid" id="servicesGrid"></div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="btn" id="confirmBtn">Confirm Selection ✅</button>
+                    </div>
+                </div>
+
+                <div class="error" id="servicesError"></div>
+            </div>
+
+            <!-- Step 4: Confirmation -->
+            <div class="confirmation" id="confirmation">
+                <h3>🎉 Reservation Confirmed!</h3>
+                <p>Your service reservation has been submitted. You will receive a confirmation email shortly.</p>
+                <div id="selectedServices"></div>
+                <button class="btn" onclick="resetForm()">Start New Reservation</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class VehicleServiceApp {
+            constructor() {
+                this.selectedFile = null;
+                this.analysisKeywords = [];
+                this.availableServices = [];
+                this.selectedServices = [];
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                const fileUpload = document.getElementById('fileUpload');
+                const fileInput = document.getElementById('fileInput');
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                const confirmBtn = document.getElementById('confirmBtn');
+
+                // File upload events
+                fileUpload.addEventListener('click', () => fileInput.click());
+                fileUpload.addEventListener('dragover', this.handleDragOver.bind(this));
+                fileUpload.addEventListener('dragleave', this.handleDragLeave.bind(this));
+                fileUpload.addEventListener('drop', this.handleDrop.bind(this));
+                fileInput.addEventListener('change', this.handleFileSelect.bind(this));
+
+                // Button events
+                analyzeBtn.addEventListener('click', this.analyzeFile.bind(this));
+                confirmBtn.addEventListener('click', this.confirmSelection.bind(this));
+            }
+
+            handleDragOver(e) {
+                e.preventDefault();
+                document.getElementById('fileUpload').classList.add('dragover');
+            }
+
+            handleDragLeave(e) {
+                e.preventDefault();
+                document.getElementById('fileUpload').classList.remove('dragover');
+            }
+
+            handleDrop(e) {
+                e.preventDefault();
+                document.getElementById('fileUpload').classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.processFile(files[0]);
+                }
+            }
+
+            handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.processFile(file);
+                }
+            }
+
+            processFile(file) {
+                // Validate file
+                if (!this.validateFile(file)) return;
+
+                this.selectedFile = file;
+                this.displayFileInfo(file);
+                this.createPreview(file);
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+
+            validateFile(file) {
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/quicktime'];
+
+                if (file.size > maxSize) {
+                    this.showError('analysisError', 'File size must be less than 10MB');
+                    return false;
+                }
+
+                if (!allowedTypes.includes(file.type)) {
+                    this.showError('analysisError', 'Please select a valid image or video file');
+                    return false;
+                }
+
+                return true;
+            }
+
+            displayFileInfo(file) {
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = this.formatFileSize(file.size);
+                document.getElementById('fileInfo').style.display = 'block';
+            }
+
+            createPreview(file) {
+                const previewContainer = document.getElementById('previewContainer');
+                previewContainer.innerHTML = '';
+
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.className = 'preview-media';
+                    img.src = URL.createObjectURL(file);
+                    previewContainer.appendChild(img);
+                } else if (file.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.className = 'preview-media';
+                    video.controls = true;
+                    video.src = URL.createObjectURL(file);
+                    previewContainer.appendChild(video);
+                }
+            }
+
+            async analyzeFile() {
+                this.showLoading('analysisLoading');
+                this.activateStep('step2');
+
+                try {
+                    // Convert file to base64 for API transmission
+                    const base64File = await this.fileToBase64(this.selectedFile);
+                    
+                    // Call LLM API - Replace with your actual endpoint
+                    const analysisResponse = await this.callLLMAPI(base64File);
+                    
+                    this.analysisKeywords = analysisResponse.keywords;
+                    this.displayAnalysisResults();
+                    
+                    // Automatically proceed to load services
+                    await this.loadServices();
+                    
+                } catch (error) {
+                    this.showError('analysisError', 'Failed to analyze the image. Please try again.');
+                    console.error('Analysis error:', error);
+                } finally {
+                    this.hideLoading('analysisLoading');
+                }
+            }
+
+            async callLLMAPI(base64File) {
+                // Replace this with your actual LLM API endpoint and configuration
+                const API_ENDPOINT = 'https://your-llm-api-endpoint.com/analyze';
+                
+                // This is a mock implementation - replace with actual API call
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        // Mock response - replace with actual API response parsing
+                        const mockKeywords = this.generateMockKeywords();
+                        resolve({ keywords: mockKeywords });
+                    }, 2000);
+                });
+
+                /* Actual API call template:
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer YOUR_API_KEY'
+                    },
+                    body: JSON.stringify({
+                        image: base64File,
+                        prompt: "Analyze this vehicle issue and return relevant keywords for automotive services"
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+                
+                return await response.json();
+                */
+            }
+
+            generateMockKeywords() {
+                // Mock keywords for demonstration - remove when implementing real API
+                const possibleKeywords = [
+                    'brake', 'engine', 'oil change', 'tire', 'battery', 'transmission',
+                    'air filter', 'spark plug', 'coolant', 'suspension', 'exhaust',
+                    'alignment', 'diagnostic', 'maintenance'
+                ];
+                
+                const numKeywords = Math.floor(Math.random() * 4) + 2;
+                const selectedKeywords = [];
+                
+                for (let i = 0; i < numKeywords; i++) {
+                    const randomKeyword = possibleKeywords[Math.floor(Math.random() * possibleKeywords.length)];
+                    if (!selectedKeywords.includes(randomKeyword)) {
+                        selectedKeywords.push(randomKeyword);
+                    }
+                }
+                
+                return selectedKeywords;
+            }
+
+            displayAnalysisResults() {
+                const keywordsList = document.getElementById('keywordsList');
+                keywordsList.innerHTML = '';
+                
+                this.analysisKeywords.forEach(keyword => {
+                    const tag = document.createElement('span');
+                    tag.className = 'keyword-tag';
+                    tag.textContent = keyword;
+                    keywordsList.appendChild(tag);
+                });
+                
+                document.getElementById('analysisResults').style.display = 'block';
+            }
+
+            async loadServices() {
+                this.showLoading('servicesLoading');
+                this.activateStep('step3');
+
+                try {
+                    // Call Services API - Replace with your actual endpoint
+                    const servicesResponse = await this.callServicesAPI();
+                    
+                    this.availableServices = servicesResponse.services;
+                    this.preselectServices();
+                    this.displayServices();
+                    
+                } catch (error) {
+                    this.showError('servicesError', 'Failed to load services. Please try again.');
+                    console.error('Services error:', error);
+                } finally {
+                    this.hideLoading('servicesLoading');
+                }
+            }
+
+            async callServicesAPI() {
+                // Replace this with your actual Services API endpoint
+                const API_ENDPOINT = 'https://your-services-api-endpoint.com/services';
+                
+                // This is a mock implementation - replace with actual API call
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const mockServices = this.generateMockServices();
+                        resolve({ services: mockServices });
+                    }, 1500);
+                });
+
+                /* Actual API call template:
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer YOUR_API_KEY'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+                
+                return await response.json();
+                */
+            }
+
+            generateMockServices() {
+                // Mock services for demonstration - replace when implementing real API
+                return [
+                    {
+                        id: 1,
+                        name: 'Brake Inspection & Repair',
+                        description: 'Complete brake system inspection and repair service',
+                        price: 150,
+                        keywords: ['brake', 'braking', 'stop']
+                    },
+                    {
+                        id: 2,
+                        name: 'Engine Diagnostic',
+                        description: 'Comprehensive engine diagnostic and troubleshooting',
+                        price: 120,
+                        keywords: ['engine', 'diagnostic', 'check engine']
+                    },
+                    {
+                        id: 3,
+                        name: 'Oil Change Service',
+                        description: 'Full synthetic oil change with filter replacement',
+                        price: 60,
+                        keywords: ['oil', 'oil change', 'maintenance']
+                    },
+                    {
+                        id: 4,
+                        name: 'Tire Rotation & Balance',
+                        description: 'Tire rotation, balancing, and pressure check',
+                        price: 80,
+                        keywords: ['tire', 'rotation', 'balance']
+                    },
+                    {
+                        id: 5,
+                        name: 'Battery Test & Replacement',
+                        description: 'Battery testing and replacement if needed',
+                        price: 200,
+                        keywords: ['battery', 'electrical', 'starting']
+                    },
+                    {
+                        id: 6,
+                        name: 'Transmission Service',
+                        description: 'Transmission fluid change and inspection',
+                        price: 250,
+                        keywords: ['transmission', 'fluid', 'shifting']
+                    }
+                ];
+            }
+
+            preselectServices() {
+                this.selectedServices = [];
+                
+                this.availableServices.forEach(service => {
+                    const hasMatch = service.keywords.some(keyword => 
+                        this.analysisKeywords.some(analysisKeyword => 
+                            keyword.toLowerCase().includes(analysisKeyword.toLowerCase()) ||
+                            analysisKeyword.toLowerCase().includes(keyword.toLowerCase())
+                        )
+                    );
+                    
+                    if (hasMatch) {
+                        this.selectedServices.push(service.id);
+                        service.preselected = true;
+                    }
+                });
+            }
+
+            displayServices() {
+                const servicesGrid = document.getElementById('servicesGrid');
+                servicesGrid.innerHTML = '';
+                
+                this.availableServices.forEach(service => {
+                    const serviceCard = this.createServiceCard(service);
+                    servicesGrid.appendChild(serviceCard);
+                });
+                
+                document.getElementById('servicesResults').style.display = 'block';
+            }
+
+            createServiceCard(service) {
+                const card = document.createElement('div');
+                card.className = 'service-card';
+                card.dataset.serviceId = service.id;
+                
+                if (service.preselected) {
+                    card.classList.add('preselected');
+                }
+                
+                if (this.selectedServices.includes(service.id)) {
+                    card.classList.add('selected');
+                }
+                
+                card.innerHTML = `
+                    <div class="service-title">
+                        ${service.name}
+                        ${service.preselected ? '<span class="match-indicator">AI Match</span>' : ''}
+                    </div>
+                    <div class="service-description">${service.description}</div>
+                    <div class="service-price">$${service.price}</div>
+                `;
+                
+                card.addEventListener('click', () => this.toggleService(service.id, card));
+                
+                return card;
+            }
+
+            toggleService(serviceId, cardElement) {
+                const index = this.selectedServices.indexOf(serviceId);
+                
+                if (index > -1) {
+                    this.selectedServices.splice(index, 1);
+                    cardElement.classList.remove('selected');
+                } else {
+                    this.selectedServices.push(serviceId);
+                    cardElement.classList.add('selected');
+                }
+            }
+
+            confirmSelection() {
+                if (this.selectedServices.length === 0) {
+                    alert('Please select at least one service.');
+                    return;
+                }
+                
+                this.displayConfirmation();
+            }
+
+            displayConfirmation() {
+                const selectedServicesDiv = document.getElementById('selectedServices');
+                const selectedServicesList = this.availableServices
+                    .filter(service => this.selectedServices.includes(service.id))
+                    .map(service => `<li>${service.name} - $${service.price}</li>`)
+                    .join('');
+                
+                const totalPrice = this.availableServices
+                    .filter(service => this.selectedServices.includes(service.id))
+                    .reduce((total, service) => total + service.price, 0);
+                
+                selectedServicesDiv.innerHTML = `
+                    <h4>Selected Services:</h4>
+                    <ul>${selectedServicesList}</ul>
+                    <p><strong>Total: $${totalPrice}</strong></p>
+                `;
+                
+                document.getElementById('confirmation').style.display = 'block';
+            }
+
+            // Utility methods
+            fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = error => reject(error);
+                });
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            showLoading(elementId) {
+                document.getElementById(elementId).style.display = 'block';
+            }
+
+            hideLoading(elementId) {
+                document.getElementById(elementId).style.display = 'none';
+            }
+
+            showError(elementId, message) {
+                const errorElement = document.getElementById(elementId);
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+
+            activateStep(stepId) {
+                // Remove active class from all steps
+                document.querySelectorAll('.step').forEach(step => {
+                    step.classList.remove('active');
+                });
+                
+                // Add active class to current step
+                document.getElementById(stepId).classList.add('active');
+            }
+        }
+
+        // Initialize the application
+        let app;
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new VehicleServiceApp();
+        });
+
+        // Reset form function
+        function resetForm() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
