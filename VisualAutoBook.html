@@ -504,13 +504,15 @@
                 const API_ENDPOINT = 'https://api.pivpn.core.ford.com/fordllmapi/api/v1/chat/completions';
                 
                 // This is a mock implementation - replace with actual API call
+                /*
                 return new Promise((resolve) => {
                     setTimeout(() => {
                         // Mock response - replace with actual API response parsing
-                        /*const mockKeywords = this.generateMockKeywords();
-                        resolve({ keywords: mockKeywords });*/
+                        const mockKeywords = this.generateMockKeywords();
+                        resolve({ keywords: mockKeywords });
                     }, 2000);
                 });
+                */
 
                 // Actual API call template:
                 const response = await fetch(API_ENDPOINT, {
