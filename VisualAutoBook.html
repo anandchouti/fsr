@@ -519,7 +519,7 @@ console.log("send request");
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IkpZaEFjVFBNWl9MWDZEQmxPV1E3SG4wTmVYRSJ9.eyJhdWQiOiI2YWY0Nzk4My0yNTQwLTQzYWUtODlmZi00YjkzYmY0ZWViMzMiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vYzk5MGJiN2EtNTFmNC00MzliLWJkMzYtOWMwN2ZiMTA0MWMwL3YyLjAiLCJpYXQiOjE3NTUxMTI0NzgsIm5iZiI6MTc1NTExMjQ3OCwiZXhwIjoxNzU1MTE2Mzc4LCJhaW8iOiJrMlJnWU5naXZOclY1bWYrN1oxL2E1eXFmL1FzTEtqK1lzMXhQV2VOMk5VeXJaM2VTNlVBIiwiYXpwIjoiOTk5NzUzNGQtYmMzNC00MTlmLWJmMWYtMzIwZTJiZjI3OTMwIiwiYXpwYWNyIjoiMSIsIm9pZCI6IjJkMGQzMTQ4LTZhZmMtNDc2My1hNjkzLWYwYjZhZjJjMzhhOSIsInJoIjoiMS5BUklBZXJ1UXlmUlJtME85TnB3SC14QkJ3SU41OUdwQUphNURpZjlMazc5TzZ6TVNBQUFTQUEuIiwicm9sZXMiOlsiQmFzaWMiXSwic3ViIjoiMmQwZDMxNDgtNmFmYy00NzYzLWE2OTMtZjBiNmFmMmMzOGE5IiwidGlkIjoiYzk5MGJiN2EtNTFmNC00MzliLWJkMzYtOWMwN2ZiMTA0MWMwIiwidXRpIjoidGhXUWdVQVE1RXFiTTJfaVdra21BQSIsInZlciI6IjIuMCIsInhtc19mdGQiOiI1eEUwOHZlYlZTdlRybjQySE5NU0p4T2VUazI3c0l6Wjl1SXFnYWJOVXpnQmRYTjNaWE4wTXkxa2MyMXoifQ.nx2WH6-84eB4iSBTlfs657DLh-Cpq7xaeB6UPXjwjhAIdBO_i9teSJKoZaxGxpesZJqAQ0oNHfNIzKk87J3TMNi2lyuMQtkeNtlnwxO1oiZpKIqG8M2pq-NxCx6UXLUVx_Avm-wkb1st3jmPL53eYBwZyKJbSU5sVvDPaw4E6DO3qDgptUNLsSaER2I4LoBY2CCyLQRst48fMVbFYUxUn1yr6kjSMskfRRKJfAV2YQUP9FLwdQWJAqf6zinlIY1wb2LXFrmr4W4YP8_9dyFR9JGddvHpOIRH3kyvB_01yVXtAKGC6v5Ol_4pdpm35_Zz32SOgvpOyleropkiy0-fZg'
+                        'Authorization': ${{secrets.LLM_BT}}
                     },
                     body: JSON.stringify({
                         image: base64File,
