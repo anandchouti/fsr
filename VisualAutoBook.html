@@ -513,7 +513,7 @@
                     }, 2000);
                 });
                 */
-
+console.log("send request");
                 // Actual API call template:
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
@@ -528,9 +528,11 @@
                 });
                 
                 if (!response.ok) {
+                    console.log("request failed");
                     throw new Error(`API request failed: ${response.status}`);
                 }
-                
+
+                console.log("response = " + response);
                 return await response.json();
                 
             }
