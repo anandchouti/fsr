@@ -370,6 +370,14 @@
     </div>
 
     <script>
+    
+        const CONFIG = {
+        LLM_API_ENDPOINT: 'https://api.pivpn.core.ford.com/fordllmapi/api/v1/chat/completions',
+        LLM_API_KEY: 'qweqwe', // In production, this should come from a secure source
+        SERVICES_API_ENDPOINT: 'https://your-services-api-endpoint.com/services',
+        SERVICES_API_KEY: 'your_services_api_key_here'
+        };
+
         class VehicleServiceApp {
             constructor() {
                 this.selectedFile = null;
@@ -501,7 +509,7 @@
 
             async callLLMAPI(base64File) {
                 // Replace this with your actual LLM API endpoint and configuration
-                const API_ENDPOINT = 'https://api.pivpn.core.ford.com/fordllmapi/api/v1/chat/completions';
+                //const API_ENDPOINT = '';
                 
                 // This is a mock implementation - replace with actual API call
                 /*
@@ -513,13 +521,13 @@
                     }, 2000);
                 });
                 */
-console.log("send request");
+                console.log("send request");
                 // Actual API call template:
-                const response = await fetch(API_ENDPOINT, {
+                const response = await fetch(CONFIG.LLM_API_ENDPOINT, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': ${{secrets.LLM_BT}}
+                        'Authorization': `Bearer ${CONFIG.LLM_API_KEY}`
                     },
                     body: JSON.stringify({
                         image: base64File,
